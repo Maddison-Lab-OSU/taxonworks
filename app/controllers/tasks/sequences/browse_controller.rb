@@ -7,11 +7,10 @@ class Tasks::Sequences::BrowseController < ApplicationController
 
   # POST
   def sequences
-    gene_id = params[:gene_id]
-    gene = Descriptor.find_by(id: gene_id)
-    sequences = []
-    sequences = gene.sequences if gene
-    
-    render :json => sequences
+    render :json => Queries::SequenceFilterQuery.new(filter_params).result
+  end
+
+  def filter_params
+    params.permit(:otu_id, :otu_descendants, :collection_object_namespace_id, :collection_object_identifier, :gene_descriptor_id)
   end
 end

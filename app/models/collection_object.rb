@@ -123,6 +123,8 @@ class CollectionObject < ApplicationRecord
   has_many :otus, through: :taxon_determinations, inverse_of: :collection_objects
   has_many :taxon_names, through: :otus
 
+  has_many :sequences, through: :derived_extracts, source: :derived_sequences
+
   has_many :type_designations, class_name: 'TypeMaterial', foreign_key: :biological_object_id, inverse_of: :material
 
   belongs_to :collecting_event, inverse_of: :collection_objects
