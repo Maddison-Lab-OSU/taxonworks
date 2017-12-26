@@ -26,7 +26,7 @@ module Queries
 
     def otu_scope
       sequences = Sequence.none
-      inner_scope = query_otu_descendants == "1" ? Otu.self_and_descendants_of(query_otu_id) : Otu.where(id: query_otu_id)
+      inner_scope = query_otu_descendants == "true" ? Otu.self_and_descendants_of(query_otu_id) : Otu.where(id: query_otu_id)
       
       inner_scope.each do |otu|
         sequences = sequences.or(otu.sequences)

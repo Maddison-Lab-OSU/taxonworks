@@ -1,7 +1,7 @@
 <template>
     <div class="panel column-big separate-right" data-help="Use the left and right buttoms to hide or show columns groups">
         <div class="title nav-line ">
-            <span>{{ title }}<b> {{ getBegItemCount() }}&nbsp;-&nbsp;{{ getEndItemCount() }}</b> of <b>{{ this.maxItems }}</b></span>
+            <span>{{ title }}<b> {{ begItemCountForPage }}&nbsp;-&nbsp;{{ endItemCountForPage }}</b> of <b>{{ maxItems }}</b></span>
         </div>      
         <div class="navigation-controls"> 
             <div class="navigation-bar-left">
@@ -88,14 +88,14 @@
         },
         methods: {
             prevPage: function() {
-                this.$emit("newPage", --this.currentPage);
+                this.$emit("pageSelected", --this.currentPage);
             },
             nextPage: function() {
-                this.$emit("newPage", ++this.currentPage)
+                this.$emit("pageSelected", ++this.currentPage)
             },
             selectPage: function(newPage) {
                 this.currentPage = newPage;
-                this.$emit("newPage", this.currentPage);
+                this.$emit("pageSelected", this.currentPage);
             },
             showAll: function() {
                 this.paginating = false;
@@ -103,33 +103,7 @@
             },
             paginate: function() {
                 this.paginating = true;
-                this.$emit("newPage", this.currentPage);
-            },
-            getBegItemCount: function() {
-                if(!this.paginating) {
-                    if(this.maxItems > 0)
-                        return 1;
-
-                    return 0;
-                }
-                
-                let begItemCount = (this.currentPage * this.perPage) - (this.perPage - 1);
-
-                if(this.maxItems <= 0)
-                    begItemCount = 0;
-                
-                return begItemCount;
-            },
-            getEndItemCount: function() {
-                if(!this.paginating)
-                    return this.maxItems;
-
-                let endItemCount = this.currentPage * this.perPage;
-
-                if(endItemCount > this.maxItems)
-                    endItemCount = this.maxItems;
-
-                return endItemCount;
+                this.$emit("pageSelected", this.currentPage);
             },
             range: function(beg, end) {
                 let arr = [];
@@ -165,7 +139,35 @@
             },
             pagesDisplayed: function() {
                 this.calculateBoundaries();
+            }
+        },
+        computed: {
+            begItemCountForPage: function() {
+                if(!this.paginating) {
+                    if(this.maxItems > 0)
+                        return 1;
+
+                    return 0;
+                }
+                
+                let begItemCount = (this.currentPage * this.perPage) - (this.perPage - 1);
+
+                if(this.maxItems <= 0)
+                    begItemCount = 0;
+                
+                return begItemCount;
             },
+            endItemCountForPage: function() {
+                if(!this.paginating)
+                    return this.maxItems;
+
+                let endItemCount = this.currentPage * this.perPage;
+
+                if(endItemCount > this.maxItems)
+                    endItemCount = this.maxItems;
+
+                return endItemCount;
+            }
         }
     }
 </script>

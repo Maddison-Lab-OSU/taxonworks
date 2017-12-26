@@ -1,12 +1,13 @@
 <template>
     <div>
         <paged-table-header
+            ref="pagedTableHeader"
             :maxItems="list.length"
             :initialPage="initialPage"
             :perPage="perPage"
             :pagesDisplayed="pagesDisplayed"
             :title="title"
-            @newPage="newPage"
+            @pageSelected="pageSelected"
             @showAll="showAll">
         </paged-table-header>
         <table-list
@@ -15,8 +16,8 @@
             :header="header"
             :destroy="destroy"
             :edit="edit"
-            @delete="deleteCallback"
-            @edit="editCallback">
+            @delete="(item) => { $emit('delete', item); }"
+            @edit="(item) => { $emit('edit', item); }">
         </table-list>
     </div>
 </template>
@@ -79,18 +80,16 @@
             tableList
         },
         methods: {
-            newPage: function(newPage) {
+            pageSelected: function(newPage) {
                 this.currentPage = newPage;
                 this.paginating = true;
+                this.$emit("pageSelected", newPage);
             },
             showAll: function() {
                 this.paginating = false;
             },
-            deleteCallback: function(item) {
-                this.$emit("delete", item);
-            },
-            editCallback: function(item) {
-                this.$emit("edit", item);
+            selectPage: function(newPage) {
+                this.$refs.pagedTableHeader.selectPage(newPage);
             }
         },
         computed: {
