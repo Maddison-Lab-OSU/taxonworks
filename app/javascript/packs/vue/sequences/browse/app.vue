@@ -9,19 +9,27 @@
                     min="1" 
                     label="label"
                     placeholder="Enter Gene name"
-                    @getItem="loadGene">
+                    @getItem="loadGene"
+                    @getInput="getGeneInput"
+                    :class="{ 'valid-input': currentParams.gene_descriptor_id }">
                 </autocomplete>
+                <span></span>
             </div>
             <div id="otu">
-                <autocomplete
-                    id="otu_autocomplete"
-                    url="/otus/autocomplete"
-                    param="term"
-                    min="3"
-                    label="label"
-                    placeholder="Enter Otu name"
-                    @getItem="loadOtu">
-                </autocomplete>
+                <div>
+                    <autocomplete
+                        id="otu_autocomplete"
+                        url="/otus/autocomplete"
+                        param="term"
+                        min="3"
+                        label="label"
+                        placeholder="Enter Otu name"
+                        @getItem="loadOtu"
+                        @getInput="getOtuInput"
+                        :class="{ 'valid-input': currentParams.otu_id }">
+                    </autocomplete>
+                    <span></span>
+                </div>
                 <div id="otu_descendants_container">
                     <label>
                         Descendants
@@ -30,16 +38,27 @@
                 </div>
             </div>
             <div id="collection_object_namespace">
-                <autocomplete
-                    id="namespace_autocomplete"
-                    url="/namespaces/autocomplete"
-                    param="term"
-                    min="1"
-                    label="label"
-                    placeholder="Enter namespace"
-                    @getItem="loadCollectionObjectNamespace">
-                </autocomplete>
-                <input type="text" v-model="currentParams.collection_object_identifier">
+                <div>
+                    <autocomplete
+                        id="namespace_autocomplete"
+                        url="/namespaces/autocomplete"
+                        param="term"
+                        min="1"
+                        label="label"
+                        placeholder="Enter namespace"
+                        @getItem="loadCollectionObjectNamespace"
+                        @getInput="getCollectionObjectNamespaceInput"
+                        :class="{ 'valid-input': currentParams.collection_object_namespace_id }">
+                    </autocomplete>
+                    <span></span>
+                </div>
+                <div>
+                    <input
+                    type="text"
+                    v-model="currentParams.collection_object_identifier"
+                    :class="{ 'valid-input': currentParams.collection_object_identifier }">
+                    <span></span>
+                </div>
             </div>
             <div id="search_button">
                 <input id="find_button" type="submit" @click="findSequences" class="button-request">
@@ -132,6 +151,15 @@
             loadCollectionObjectNamespace: function(namespace) {
                 this.currentParams.collection_object_namespace_id = namespace.id;
             },
+            getGeneInput: function(input) {
+                this.currentParams.gene_descriptor_id = null;
+            },
+            getOtuInput: function(input) {
+                this.currentParams.otu_id = null;
+            },
+            getCollectionObjectNamespaceInput: function(input) {
+                this.currentParams.collection_object_namespace_id = null;
+            },
             findSequences: function() {
                 this.currentParams.page = 1;
                 this.params = Object.assign({}, this.currentParams);
@@ -177,5 +205,14 @@
 <style scoped>
     #gene_autocomplete {
         margin-bottom: 5px;
+    }
+
+    .valid-input + span::after {
+        content: "✔";
+        color: limegreen;
+    }
+
+    .vue-autocomplete {
+        display: inline-block;
     }
 </style>
