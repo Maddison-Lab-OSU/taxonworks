@@ -25,7 +25,7 @@
                 <div id="otu_descendants_container">
                     <label>
                         Descendants
-                        <input type="checkbox" id="otu_descendants_checkbox" v-model="params.otu_descendants">
+                        <input type="checkbox" id="otu_descendants_checkbox" v-model="currentParams.otu_descendants">
                     </label>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                     placeholder="Enter namespace"
                     @getItem="loadCollectionObjectNamespace">
                 </autocomplete>
-                <input type="text" v-model="params.collection_object_identifier">
+                <input type="text" v-model="currentParams.collection_object_identifier">
             </div>
             <div id="search_button">
                 <input id="find_button" type="submit" @click="findSequences" class="button-request">
@@ -78,6 +78,7 @@
                     gene_descriptor_id: null,
                     page: 1
                 },
+                currentParams: {},
                 list: [],
                 header: [
                     "Name"
@@ -88,6 +89,8 @@
             }
         },
         mounted: function() {
+            this.currentParams = Object.assign({}, this.params);
+            
             this.$nextTick(function() {
                 let foundParam = false;
                 let url = new URL(window.location.href);
@@ -103,6 +106,7 @@
 
                         foundParam = true;
                         this.params[key] = val;
+                        this.currentParams[key] = val;
                     } 
                 }
 
@@ -113,22 +117,24 @@
             window.onpopstate = (event) => {
                 if(event.state.params) {
                     this.params = Object.assign({}, this.params, event.state.params);
+                    this.currentParams = Object.assign({}, this.params);                    
                     this.loadSequences();
                 }
             }
         },
         methods: {
             loadGene: function(gene) {
-                this.params.gene_descriptor_id = gene.id;
+                this.currentParams.gene_descriptor_id = gene.id;
             },
             loadOtu: function(otu) {
-                this.params.otu_id = otu.id;
+                this.currentParams.otu_id = otu.id;
             },
             loadCollectionObjectNamespace: function(namespace) {
-                this.params.collection_object_namespace_id = namespace.id;
+                this.currentParams.collection_object_namespace_id = namespace.id;
             },
             findSequences: function() {
-                this.params.page = 1;
+                this.currentParams.page = 1;
+                this.params = Object.assign({}, this.currentParams);
                 this.addPageHistory();
                 this.loadSequences();
             },
@@ -147,6 +153,7 @@
             },
             pageSelected: function(newPage) {
                 if(newPage !== this.params.page) {
+                    this.currentParams.page = newPage;
                     this.params.page = newPage;
                     this.addPageHistory();
                 }
