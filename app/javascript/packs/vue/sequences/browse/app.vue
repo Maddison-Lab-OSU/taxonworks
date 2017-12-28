@@ -1,7 +1,8 @@
 <template>
     <div id="browse_sequences">
-        <div id="criteria_container">
-            <div id="gene_name">
+        <div class="filters-container">
+            <div id="gene_name" class="filter-container">
+                <h3>Gene name</h3>
                 <autocomplete
                     id="gene_autocomplete"
                     url="/descriptors/autocomplete" 
@@ -15,7 +16,8 @@
                 </autocomplete>
                 <span></span>
             </div>
-            <div id="otu">
+            <div id="otu" class="filter-container">
+                <h3>Otu</h3>
                 <div>
                     <autocomplete
                         id="otu_autocomplete"
@@ -37,7 +39,8 @@
                     </label>
                 </div>
             </div>
-            <div id="collection_object_namespace">
+            <div id="collection_object_namespace" class="filter-container">
+                <h3>Collection object identifier</h3>
                 <div>
                     <autocomplete
                         id="namespace_autocomplete"
@@ -56,7 +59,8 @@
                     <input
                     type="text"
                     v-model="currentParams.collection_object_identifier"
-                    :class="{ 'valid-input': currentParams.collection_object_identifier }">
+                    :class="{ 'valid-input': currentParams.collection_object_identifier }"
+                    placeholder="Enter identifier">
                     <span></span>
                 </div>
             </div>
@@ -207,6 +211,10 @@
         margin-bottom: 5px;
     }
 
+    #otu_descendants_checkbox {
+        vertical-align: middle;
+    }
+
     .valid-input + span::after {
         content: "✔";
         color: limegreen;
@@ -214,5 +222,16 @@
 
     .vue-autocomplete {
         display: inline-block;
+    }
+
+    .filters-container,
+    .filter-container {
+        margin-bottom: 20px;
+    }
+
+    input[type=text],
+    .vue-autocomplete >>> input[type=text] {
+        width: 500px;
+        margin-bottom: 5px;
     }
 </style>
