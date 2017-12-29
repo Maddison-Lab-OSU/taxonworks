@@ -4,6 +4,7 @@
             <div id="gene_name" class="filter-container">
                 <h3>Gene name</h3>
                 <autocomplete
+                    ref="geneAutocomplete"
                     id="gene_autocomplete"
                     url="/descriptors/autocomplete" 
                     param="term" 
@@ -20,6 +21,7 @@
                 <h3>Otu</h3>
                 <div>
                     <autocomplete
+                        ref="otuAutocomplete"
                         id="otu_autocomplete"
                         url="/otus/autocomplete"
                         param="term"
@@ -43,6 +45,7 @@
                 <h3>Collection object identifier</h3>
                 <div>
                     <autocomplete
+                        ref="namespaceAutocomplete"
                         id="namespace_autocomplete"
                         url="/namespaces/autocomplete"
                         param="term"
@@ -133,14 +136,17 @@
                     } 
                 }
 
-                if(foundParam)
+                if(foundParam) {
+                    this.fillInAutocompletes();
                     this.loadSequences();
+                }
             });
 
             window.onpopstate = (event) => {
                 if(event.state.params) {
                     this.params = Object.assign({}, this.params, event.state.params);
-                    this.currentParams = Object.assign({}, this.params);                    
+                    this.currentParams = Object.assign({}, this.params);
+                    this.fillInAutocompletes();                    
                     this.loadSequences();
                 }
             }
@@ -192,6 +198,38 @@
             },
             addPageHistory: function() {
                 history.pushState({ params: this.params }, null, this.generateUrl("/tasks/sequence/browse/index", this.params));
+            },
+            fillInAutocompletes: function() {
+                if(this.params.gene_descriptor_id) {
+                    this.getAutocompleteText("/descriptors/autocomplete", this.params.gene_descriptor_id).then((text) => {
+                        this.$refs.geneAutocomplete.setInputText(text);
+                    });
+                }
+
+                if(this.params.otu_id) {
+                    this.getAutocompleteText("/otus/autocomplete", this.params.otu_id).then((text) => {
+                        this.$refs.otuAutocomplete.setInputText(text);
+                    });
+                }
+
+                if(this.params.collection_object_namespace_id) {
+                    this.getAutocompleteText("/namespaces/autocomplete", this.params.collection_object_namespace_id).then((text) => {
+                        this.$refs.namespaceAutocomplete.setInputText(text);
+                    });
+                }
+            },
+            getAutocompleteText: function(url, id) {
+                return new Promise((resolve, reject) => {
+                    this.$http.get(this.generateUrl(url, { term: id })).then(res => {
+                        let list = res.body;
+
+                        for(let i = 0; i < list.length; i++)
+                            if(list[i].id === parseInt(id, 10))
+                                resolve(list[i].label);
+
+                        resolve("");
+                    });
+                });
             },
             generateUrl: function(baseUrl, params) {
                 let url = `${baseUrl}?`;

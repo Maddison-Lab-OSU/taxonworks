@@ -146,6 +146,9 @@ export default {
     },
   
       methods: {
+        setInputText: function(text) {
+          this.type = text;
+        },
         sendItem: function(item) {
           this.$emit('input', item);
           this.$parent.$emit(this.eventSend, item);
