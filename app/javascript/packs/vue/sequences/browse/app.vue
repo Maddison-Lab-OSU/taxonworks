@@ -60,10 +60,10 @@
                 </div>
                 <div>
                     <input
-                    type="text"
-                    v-model="currentParams.collection_object_identifier"
-                    :class="{ 'valid-input': currentParams.collection_object_identifier }"
-                    placeholder="Enter identifier">
+                        type="text"
+                        v-model="currentParams.collection_object_identifier"
+                        :class="{ 'valid-input': currentParams.collection_object_identifier }"
+                        placeholder="Enter identifier">
                     <span></span>
                 </div>
             </div>

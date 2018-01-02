@@ -46,6 +46,11 @@
                     <a v-else href="#" @click.prevent="paginate">Paginate</a>
                 </span>
             </div>
+            <div class="navigation-bar-right">
+                <a data-icon="download" href="#" data-turbolinks="false" @click.prevent="downloadAll">                 
+                    Download
+                </a>               
+            </div>
         </div>
     </div>
 </template>
@@ -100,6 +105,9 @@
             showAll: function() {
                 this.paginating = false;
                 this.$emit("showAll");
+            },
+            downloadAll: function() {
+                this.$emit("downloadAll");
             },
             paginate: function() {
                 this.paginating = true;

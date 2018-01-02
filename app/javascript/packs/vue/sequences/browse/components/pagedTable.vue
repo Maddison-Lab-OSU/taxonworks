@@ -8,7 +8,8 @@
             :pagesDisplayed="pagesDisplayed"
             :title="title"
             @pageSelected="pageSelected"
-            @showAll="showAll">
+            @showAll="showAll"
+            @downloadAll="downloadAll">
         </paged-table-header>
         <table-list
             :list="pagedList"
@@ -87,6 +88,28 @@
             },
             showAll: function() {
                 this.paginating = false;
+            },
+            downloadAll: function() {
+                let csvContent = "data:text/csv;charset=utf-8," + this.header.join(",") + "\n";
+
+                for(let i = 0; i < this.list.length; i++) {
+                    for(let j = 0; j < this.attributes.length; j++) {
+                        csvContent += this.list[i][this.attributes[j]];
+
+                        if(j < this.attributes.length - 1)
+                            csvContent += ",";
+                    }
+
+                    csvContent += "\n";
+                }
+
+                let encodedUri = encodeURI(csvContent);
+                let link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "data.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             },
             selectPage: function(newPage) {
                 this.$refs.pagedTableHeader.selectPage(newPage);
